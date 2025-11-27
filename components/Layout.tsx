@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 interface LayoutProps {
@@ -52,7 +54,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   );
 
   return (
-    <div className="min-h-screen bg-stone-50 flex flex-col items-center py-12 px-4 sm:px-6 relative selection:bg-stone-200 selection:text-stone-900 overflow-hidden font-serif">
+    <div className="min-h-screen flex flex-col items-center py-12 px-4 sm:px-6 relative selection:bg-stone-200 selection:text-stone-900 overflow-hidden font-serif">
         
         {/* Layer 1: Subtle Paper Gradient (Vignette) */}
         <div className="fixed inset-0 pointer-events-none z-[-2] bg-[radial-gradient(circle_at_center,#fafaf9_0%,#f5f5f4_100%)]"></div>
