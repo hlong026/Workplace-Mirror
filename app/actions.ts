@@ -39,6 +39,17 @@ const analysisSchema: Schema = {
 };
 
 export async function analyzeContent(text: string, imageBase64: string | null): Promise<AnalysisResult> {
+  // 1. Validate API Key
+  if (!apiKey) {
+    console.error("Missing API_KEY environment variable.");
+    throw new Error("Server configuration error: API Key missing.");
+  }
+
+  // 2. Validate Input
+  if (!text && !imageBase64) {
+    throw new Error("Input is empty.");
+  }
+
   const modelId = "gemini-2.5-flash"; 
 
   const promptText = `
@@ -68,12 +79,12 @@ export async function analyzeContent(text: string, imageBase64: string | null): 
     }
 
     if (imageBase64) {
-      // Remove data URL prefix if present for the API call
+      // Clean base64 string
       const cleanBase64 = imageBase64.replace(/^data:image\/(png|jpeg|jpg|webp);base64,/, "");
       parts.push({
         inlineData: {
           data: cleanBase64,
-          mimeType: "image/png", 
+          mimeType: "image/jpeg", // We compress to jpeg on client side
         },
       });
       parts.push({ text: "请分析这张图片中的对话内容。" });
@@ -98,8 +109,12 @@ export async function analyzeContent(text: string, imageBase64: string | null): 
       throw new Error("No response text generated");
     }
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini Analysis Error:", error);
-    throw new Error("Analysis failed");
+    // Return a user-friendly error message if possible
+    if (error.message && error.message.includes("API Key")) {
+      throw new Error("API Key 配置错误");
+    }
+    throw new Error("AI 分析服务暂时不可用");
   }
 }
